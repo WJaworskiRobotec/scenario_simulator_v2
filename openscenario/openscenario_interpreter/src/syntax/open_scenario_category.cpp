@@ -14,6 +14,7 @@
 
 #include <openscenario_interpreter/syntax/catalog_definition.hpp>
 #include <openscenario_interpreter/syntax/open_scenario_category.hpp>
+#include <openscenario_interpreter/syntax/parameter_value_distribution_definition.hpp>
 #include <openscenario_interpreter/syntax/scenario_definition.hpp>
 
 namespace openscenario_interpreter
@@ -22,8 +23,10 @@ inline namespace syntax
 {
 OpenScenarioCategory::OpenScenarioCategory(const pugi::xml_node & tree, Scope & scope)
 : Group(
-    tree.child("Catalog") ? make<CatalogDefinition>(tree, scope)
-                          : make<ScenarioDefinition>(tree, scope))
+    tree.child("ParameterValueDistribution")
+      ? make<ParameterValueDistributionDefinition>(tree, scope)
+    : tree.child("Catalog") ? make<CatalogDefinition>(tree, scope)
+                            : make<ScenarioDefinition>(tree, scope))
 {
 }
 }  // namespace syntax
