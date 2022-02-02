@@ -34,15 +34,6 @@ std::istream & operator>>(std::istream & is, DynamicsShape & datum)
 
   BOILERPLATE(linear);
   BOILERPLATE(step);
-
-#undef BOILERPLATE
-
-#define BOILERPLATE(IDENTIFIER)                                           \
-  if (buffer == #IDENTIFIER) {                                            \
-    throw UNSUPPORTED_ENUMERATION_VALUE_SPECIFIED(DynamicsShape, buffer); \
-  }                                                                       \
-  static_assert(true, "")
-
   BOILERPLATE(cubic);
   BOILERPLATE(sinusoidal);
 

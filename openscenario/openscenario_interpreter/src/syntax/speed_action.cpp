@@ -73,12 +73,9 @@ auto SpeedAction::start() -> void
         setTargetSpeed(actor, status.action_status.twist.linear.x, true);
         break;
       }
-      case DynamicsShape::linear:
+      default:
         setTargetSpeed(actor, get_current_absolute_target_speed(), true);
         break;
-
-      default:
-        throw UNSUPPORTED_SETTING_DETECTED(SpeedAction, speed_action_dynamics.dynamics_shape);
     }
 
     if (speed_action_target.is<RelativeTargetSpeed>()) {

@@ -42,14 +42,6 @@ auto operator>>(std::istream & is, DynamicsDimension & datum) -> std::istream &
 
 #undef BOILERPLATE
 
-#define BOILERPLATE(IDENTIFIER)                                               \
-  if (buffer == #IDENTIFIER) {                                                \
-    throw UNSUPPORTED_ENUMERATION_VALUE_SPECIFIED(DynamicsDimension, buffer); \
-  }                                                                           \
-  static_assert(true, "")
-
-#undef BOILERPLATE
-
   throw UNEXPECTED_ENUMERATION_VALUE_SPECIFIED(DynamicsDimension, buffer);
 }
 
