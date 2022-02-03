@@ -73,7 +73,8 @@ geometry_msgs::msg::Vector3 constructRPY(double roll = 0, double pitch = 0, doub
  * @param quaternion quaternion class
  * @return geometry_msgs::msg::Vector3 RPY value
  */
-geometry_msgs::msg::Vector3 constructRPYfromQuaternion(geometry_msgs::msg::Quaternion quaternion);
+geometry_msgs::msg::Vector3 constructRPYfromQuaternion(
+  const geometry_msgs::msg::Quaternion & quaternion);
 
 /**
  * @brief helper function for constructing pose

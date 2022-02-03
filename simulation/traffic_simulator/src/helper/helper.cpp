@@ -58,7 +58,8 @@ geometry_msgs::msg::Vector3 constructRPY(double roll, double pitch, double yaw)
   return rpy;
 }
 
-geometry_msgs::msg::Vector3 constructRPYfromQuaternion(geometry_msgs::msg::Quaternion quaternion)
+geometry_msgs::msg::Vector3 constructRPYfromQuaternion(
+  const geometry_msgs::msg::Quaternion & quaternion)
 {
   return quaternion_operation::convertQuaternionToEulerAngle(quaternion);
 }
