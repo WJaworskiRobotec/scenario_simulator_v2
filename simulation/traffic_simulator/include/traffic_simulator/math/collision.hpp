@@ -25,8 +25,8 @@ namespace traffic_simulator
 namespace math
 {
 bool checkCollision2D(
-  geometry_msgs::msg::Pose pose0, traffic_simulator_msgs::msg::BoundingBox bbox0,
-  geometry_msgs::msg::Pose pose1, traffic_simulator_msgs::msg::BoundingBox bbox1);
+  const geometry_msgs::msg::Pose & pose0, const traffic_simulator_msgs::msg::BoundingBox & bbox0,
+  const geometry_msgs::msg::Pose & pose1, const traffic_simulator_msgs::msg::BoundingBox & bbox1);
 }  // namespace math
 }  // namespace traffic_simulator
 
