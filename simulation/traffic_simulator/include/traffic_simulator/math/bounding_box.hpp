@@ -37,7 +37,7 @@ boost::optional<double> getPolygonDistance(
 const boost::geometry::model::polygon<boost::geometry::model::d2::point_xy<double>> get2DPolygon(
   const geometry_msgs::msg::Pose & pose, const traffic_simulator_msgs::msg::BoundingBox & bbox);
 std::vector<geometry_msgs::msg::Point> getPointsFromBbox(
-  traffic_simulator_msgs::msg::BoundingBox bbox);
+  const traffic_simulator_msgs::msg::BoundingBox & bbox);
 }  // namespace math
 }  // namespace traffic_simulator
 
