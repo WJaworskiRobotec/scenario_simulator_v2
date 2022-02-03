@@ -45,8 +45,8 @@ HermiteCurve::HermiteCurve(
 }
 
 HermiteCurve::HermiteCurve(
-  geometry_msgs::msg::Pose start_pose, geometry_msgs::msg::Pose goal_pose,
-  geometry_msgs::msg::Vector3 start_vec, geometry_msgs::msg::Vector3 goal_vec)
+  const geometry_msgs::msg::Pose & start_pose, const geometry_msgs::msg::Pose & goal_pose,
+  const geometry_msgs::msg::Vector3 & start_vec, const geometry_msgs::msg::Vector3 & goal_vec)
 {
   ax_ = 2 * start_pose.position.x - 2 * goal_pose.position.x + start_vec.x + goal_vec.x;
   bx_ = -3 * start_pose.position.x + 3 * goal_pose.position.x - 2 * start_vec.x - goal_vec.x;
