@@ -102,7 +102,7 @@ std::vector<double> PolynomialSolver::solveCubicEquation(
   return ret;
 }
 
-int PolynomialSolver::solveP3(const std::vector<double> & x, double a, double b, double c) const
+int PolynomialSolver::solveP3(std::vector<double> & x, double a, double b, double c) const
 {
   x = std::vector<double>(3);
   const double eps = std::numeric_limits<double>::epsilon();
