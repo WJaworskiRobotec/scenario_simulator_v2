@@ -18,7 +18,7 @@
 
 namespace metrics
 {
-MetricBase::MetricBase(std::string metrics_type) : metrics_type(metrics_type)
+MetricBase::MetricBase(const std::string & metrics_type) : metrics_type(metrics_type)
 {
   lifecycle_ = MetricLifecycle::INACTIVE;
   error_ = boost::none;
@@ -27,7 +27,7 @@ MetricBase::MetricBase(std::string metrics_type) : metrics_type(metrics_type)
 MetricBase::~MetricBase() {}
 
 void MetricBase::setEntityManager(
-  std::shared_ptr<traffic_simulator::entity::EntityManager> entity_manager_ptr)
+  const std::shared_ptr<traffic_simulator::entity::EntityManager> & entity_manager_ptr)
 {
   entity_manager_ptr_ = entity_manager_ptr;
 }

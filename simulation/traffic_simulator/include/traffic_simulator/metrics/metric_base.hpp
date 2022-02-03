@@ -30,7 +30,7 @@ enum class MetricLifecycle { INACTIVE, ACTIVE, FAILURE, SUCCESS };
 class MetricBase
 {
 public:
-  explicit MetricBase(std::string metrics_type);
+  explicit MetricBase(const std::string & metrics_type);
   virtual ~MetricBase();
   virtual bool activateTrigger() = 0;
   virtual void update() = 0;
@@ -40,7 +40,7 @@ public:
   virtual nlohmann::json toJson() = 0;
   nlohmann::json toBaseJson();
   virtual void setEntityManager(
-    std::shared_ptr<traffic_simulator::entity::EntityManager> entity_manager_ptr);
+    const std::shared_ptr<traffic_simulator::entity::EntityManager> & entity_manager_ptr);
   const std::string metrics_type;
   MetricLifecycle getLifecycle() { return lifecycle_; }
   void throwException();

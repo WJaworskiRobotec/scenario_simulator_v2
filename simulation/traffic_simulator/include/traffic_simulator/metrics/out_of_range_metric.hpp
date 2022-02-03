@@ -77,7 +77,7 @@ public:
   ~OutOfRangeMetric() override = default;
 
   void setEntityManager(
-    std::shared_ptr<traffic_simulator::entity::EntityManager> entity_manager_ptr) override;
+    const std::shared_ptr<traffic_simulator::entity::EntityManager> & entity_manager_ptr) override;
   void update() override;
   bool activateTrigger() override { return true; }
   nlohmann::json toJson() override;

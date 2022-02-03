@@ -18,7 +18,7 @@
 namespace metrics
 {
 void OutOfRangeMetric::setEntityManager(
-  std::shared_ptr<traffic_simulator::entity::EntityManager> entity_manager_ptr)
+  const std::shared_ptr<traffic_simulator::entity::EntityManager> & entity_manager_ptr)
 {
   entity_manager_ptr_ = std::move(entity_manager_ptr);
   if (jerk_topic) {
