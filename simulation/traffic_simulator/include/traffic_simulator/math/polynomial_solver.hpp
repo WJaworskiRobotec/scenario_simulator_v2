@@ -97,7 +97,7 @@ private:
            if return value is 2, 2 real roots: x[0], x[1],
            if return value is 1, 1 real root : x[0], x[1] ± i*x[2],
  */
-  int solveP3(std::vector<double> & x, double a, double b, double c) const;
+  int solveP3(const std::vector<double> & x, double a, double b, double c) const;
   double _root3(double x) const;
   double root3(double x) const;
 };
