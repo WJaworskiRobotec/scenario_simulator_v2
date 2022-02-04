@@ -15,14 +15,17 @@
 #ifndef OPENSCENARIO_INTERPRETER__SYNTAX__PARAMETER_VALUE_DISTRIBUTION_HPP_
 #define OPENSCENARIO_INTERPRETER__SYNTAX__PARAMETER_VALUE_DISTRIBUTION_HPP_
 
-#include <openscenario_interpreter/scope.hpp>
+#include "openscenario_interpreter/reader/element.hpp"
+
+#include <openscenario_interpreter/syntax/distribution_defenition.hpp>
 #include <openscenario_interpreter/syntax/file.hpp>
+#include <openscenario_interpreter/syntax/scenario_definition.hpp>
 
 namespace openscenario_interpreter
 {
 inline namespace syntax
 {
-/* ---- ParamterValueDistributionDefinition ---------------------------------
+/* ---- ParamterValueDistribution -------------------------------------------
  *
  *  <xsd:complexType name="ParameterValueDistribution">
  *    <xsd:sequence>
@@ -32,9 +35,13 @@ inline namespace syntax
  *  </xsd:complexType>
  *
  * -------------------------------------------------------------------------- */
-struct ParameterValueDistribution
+struct ParameterValueDistribution : DistributionDefinition
 {
-  explicit ParameterValueDistribution(const pugi::xml_node &, Scope &);
+  explicit ParameterValueDistribution(const pugi::xml_node & node, Scope & scope)
+  : DistributionDefinition(node, scope),
+    scenarioFile(readElement<File>("ScenarioFile", node, scope))
+  {
+  }
 
   File scenarioFile;
 };

@@ -40,7 +40,7 @@ inline namespace syntax
  *  </xsd:group>
  *
  * -------------------------------------------------------------------------- */
-struct ScenarioDefinition
+struct ScenarioDefinition : public Scope
 {
   const ParameterDeclarations parameter_declarations;
 

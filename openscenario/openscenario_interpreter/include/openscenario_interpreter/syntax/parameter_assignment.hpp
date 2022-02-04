@@ -40,6 +40,12 @@ struct ParameterAssignment
     scope.insert(parameterRef, make<std::string>(value));
   }
 
+  explicit ParameterAssignment(const pugi::xml_node & node, const Scope & scope)
+  : parameterRef(readAttribute<std::string>("parameterRef", node, scope)),
+    value(readAttribute<std::string>("value", node, scope))
+  {
+  }
+
   const std::string parameterRef;
   const std::string value;
 };
