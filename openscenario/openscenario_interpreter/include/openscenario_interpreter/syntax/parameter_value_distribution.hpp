@@ -15,8 +15,6 @@
 #ifndef OPENSCENARIO_INTERPRETER__SYNTAX__PARAMETER_VALUE_DISTRIBUTION_HPP_
 #define OPENSCENARIO_INTERPRETER__SYNTAX__PARAMETER_VALUE_DISTRIBUTION_HPP_
 
-#include "openscenario_interpreter/reader/element.hpp"
-
 #include <openscenario_interpreter/syntax/distribution_defenition.hpp>
 #include <openscenario_interpreter/syntax/file.hpp>
 #include <openscenario_interpreter/syntax/scenario_definition.hpp>

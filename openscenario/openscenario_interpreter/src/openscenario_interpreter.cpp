@@ -20,6 +20,7 @@
 #include <openscenario_interpreter/record.hpp>
 #include <openscenario_interpreter/syntax/object_controller.hpp>
 #include <openscenario_interpreter/syntax/scenario_definition.hpp>
+#include <openscenario_interpreter/syntax/parameter_value_distribution_definition.hpp>
 #include <openscenario_interpreter/utility/overload.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
 
@@ -51,9 +52,9 @@ auto Interpreter::currentLocalFrameRate() const -> std::chrono::milliseconds
   return std::chrono::milliseconds(static_cast<unsigned int>(1 / local_frame_rate * 1000));
 }
 
-auto Interpreter::currentScenarioDefinition() const -> const std::shared_ptr<ScenarioDefinition> &
+auto Interpreter::currentScenario() const -> const std::shared_ptr<OpenScenario> &
 {
-  return scenarios.front();
+  return current_scenario_script;
 }
 
 auto Interpreter::isAnErrorIntended() const -> bool { return intended_result == "error"; }
@@ -64,7 +65,7 @@ auto Interpreter::isSuccessIntended() const -> bool { return intended_result == 
 
 auto Interpreter::makeCurrentConfiguration() const -> traffic_simulator::Configuration
 {
-  const auto logic_file = currentScenarioDefinition()->road_network.logic_file;
+  const auto logic_file = currentScenario()->category.as<ScenarioDefinition>().road_network.logic_file;
 
   auto configuration = traffic_simulator::Configuration(
     logic_file.isDirectory() ? logic_file : logic_file.filepath.parent_path());
@@ -115,12 +116,26 @@ auto Interpreter::on_configure(const rclcpp_lifecycle::State &) -> Result
       GET_PARAMETER(osc_path);
       GET_PARAMETER(output_directory);
 
-      script = std::make_shared<OpenScenario>(osc_path);
+      base_script = std::make_shared<OpenScenario>(osc_path);
 
-      if (script->category.is<ScenarioDefinition>()) {
-        scenarios = {std::dynamic_pointer_cast<ScenarioDefinition>(script->category)};
+      if (base_script->category.is<ScenarioDefinition>()) {
+        makeNextScenario = [script = base_script](auto &&) mutable {
+          auto ret = script;
+          script = nullptr;
+          return ret;
+        };
+      } else if (base_script->category.is<ParameterValueDistributionDefinition>()) {
+        makeNextScenario = [](const OpenScenario & base_script) -> std::shared_ptr<OpenScenario> {
+          auto & distribution = base_script.category.as<ParameterValueDistributionDefinition>();
+          Scope scope{distribution.scenarioFile};
+          if (distribution.sampling(scope)) {
+            return std::make_shared<OpenScenario>(scope);
+          } else {
+            return nullptr;
+          }
+        };
       } else {
-        throw SyntaxError("ParameterValueDistributionDefinition is not yet supported.");
+        throw UNSUPPORTED_ELEMENT_SPECIFIED(base_script->category.type().name());
       }
 
       return Interpreter::Result::SUCCESS;  // => Inactive
@@ -131,7 +146,9 @@ auto Interpreter::on_activate(const rclcpp_lifecycle::State &) -> Result
 {
   INTERPRETER_INFO_STREAM("Activating.");
 
-  if (scenarios.empty()) {
+  current_scenario_script = makeNextScenario(*base_script);
+
+  if (!current_scenario_script) {
     INTERPRETER_INFO_STREAM("There are no more scenarios to run.");
     return Result::FAILURE;
   } else {
@@ -153,10 +170,10 @@ auto Interpreter::on_activate(const rclcpp_lifecycle::State &) -> Result
       withExceptionHandler(
         [this](auto &&...) { deactivate(); },
         [this]() -> void {
-          if (currentScenarioDefinition()) {
-            if (not currentScenarioDefinition()->complete()) {
+          if (currentScenario()) {
+            if (not currentScenario()->category.as<ScenarioDefinition>().complete()) {
               const auto evaluate_time = execution_timer.invoke("evaluate", [&] {
-                currentScenarioDefinition()->evaluate();
+                currentScenario()->category.as<ScenarioDefinition>().evaluate();
                 publishCurrentContext();
                 return 0 <= getCurrentTime();  // statistics only if 0 <= getCurrentTime()
               });
@@ -201,7 +218,7 @@ auto Interpreter::on_deactivate(const rclcpp_lifecycle::State &) -> Result
 
   disconnect();  // Deactivate traffic_simulator
 
-  scenarios.pop_front();
+  current_scenario_script = nullptr;
 
   // NOTE: Error on simulation is not error of the interpreter; so we print error messages into
   // INFO_STREAM.
@@ -250,7 +267,7 @@ auto Interpreter::publishCurrentContext() const -> void
   {
     nlohmann::json json;
     context.stamp = now();
-    context.data = (json << *script).dump();
+    context.data = (json << *currentScenario()).dump();
     context.time = getCurrentTime();
   }
 

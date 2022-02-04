@@ -59,9 +59,11 @@ class Interpreter : public rclcpp_lifecycle::LifecycleNode
 
   String output_directory;
 
-  std::shared_ptr<OpenScenario> script;
+  std::shared_ptr<OpenScenario> base_script;
 
-  std::list<std::shared_ptr<ScenarioDefinition>> scenarios;
+  std::shared_ptr<OpenScenario> current_scenario_script;
+
+  std::function<std::shared_ptr<OpenScenario>(const OpenScenario&)> makeNextScenario;
 
   std::shared_ptr<rclcpp::TimerBase> timer;
 
@@ -79,7 +81,7 @@ public:
 
   auto currentLocalFrameRate() const -> std::chrono::milliseconds;
 
-  auto currentScenarioDefinition() const -> const std::shared_ptr<ScenarioDefinition> &;
+  auto currentScenario() const -> const std::shared_ptr<OpenScenario> &;
 
   auto isAnErrorIntended() const -> bool;
 

@@ -40,11 +40,11 @@ struct ParameterValueSet : public std::list<ParameterAssignment>
   {
   }
 
-  auto sampling() const -> std::vector<std::pair<String, String>>
+  auto sampling() const -> std::vector<std::pair<String, Object>>
   {
-    std::vector<std::pair<String, String>> sample;
+    std::vector<std::pair<String, Object>> sample;
     for (auto & assignment : *this) {
-      sample.emplace_back(assignment.parameterRef, assignment.value);
+      sample.emplace_back(assignment.parameterRef, make(assignment.value));
     }
     return sample;
   }
@@ -68,7 +68,7 @@ struct ValueSetDistribution : public std::list<ParameterValueSet>
   {
   }
 
-  auto sampling() -> boost::optional<std::vector<std::pair<String, String>>>
+  auto sampling() -> boost::optional<std::vector<std::pair<String, Object>>>
   {
     return current == end() ? boost::none : boost::make_optional((current++)->sampling());
   }

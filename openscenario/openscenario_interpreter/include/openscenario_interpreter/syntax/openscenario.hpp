@@ -48,6 +48,8 @@ struct OpenScenario : public Scope
 
   explicit OpenScenario(const boost::filesystem::path &);
 
+  explicit OpenScenario(const Scope &);
+
   auto complete() const -> bool;
 
   auto evaluate() -> Object;

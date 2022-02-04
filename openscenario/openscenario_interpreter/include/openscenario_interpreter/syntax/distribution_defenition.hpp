@@ -45,7 +45,14 @@ struct DistributionDefinition : public ComplexType
   {
   }
 
-  auto sampling() -> boost::optional<std::vector<std::pair<String, String>>>;
+  auto sampling(Scope & scope) -> bool
+  {
+    if (is<Deterministic>()) {
+      return as<Deterministic>().sampling(scope);
+    } else {
+      throw UNSUPPORTED_ELEMENT_SPECIFIED(type().name());
+    }
+  }
 };
 }  // namespace syntax
 }  // namespace openscenario_interpreter

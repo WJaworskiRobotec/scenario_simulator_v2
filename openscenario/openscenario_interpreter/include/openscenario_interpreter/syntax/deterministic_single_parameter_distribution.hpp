@@ -65,9 +65,9 @@ struct DistributionSet : std::list<DistributionSetElement>
   {
   }
 
-  auto sampling() -> boost::optional<String>
+  auto sampling() -> boost::optional<Object>
   {
-    return current == end() ? boost::none : boost::make_optional((current++)->value);
+    return current == end() ? boost::none : boost::make_optional(make((current++)->value));
   }
 
 private:
@@ -93,12 +93,12 @@ struct DistributionRange
   {
   }
 
-  auto sampling() -> boost::optional<String>
+  auto sampling() -> boost::optional<Object>
   {
     if (current > range.upperLimit) {
       return boost::none;
     } else {
-      auto ret = boost::make_optional(std::to_string(current));
+      auto ret = boost::make_optional(make(current));
       current += stepWidth;
       return ret;
     }
@@ -130,7 +130,7 @@ struct UserDefinedDistribution
   {
   }
 
-  auto sampling() -> boost::optional<String>
+  auto sampling() -> boost::optional<Object>
   {
     auto iter = distributions.find(type);
     if (iter != distributions.end()) {
@@ -144,7 +144,7 @@ struct UserDefinedDistribution
   const String content;
 
 private:
-  std::unordered_map<String, std::function<boost::optional<String>(const String &)>> distributions;
+  std::unordered_map<String, std::function<boost::optional<Object>(const String &)>> distributions;
 };
 
 /* ---- DeterministicSingleParameterDistribution ------------------------------------
@@ -170,7 +170,7 @@ struct DeterministicSingleParameterDistributionType : public ComplexType
   {
   }
 
-  auto sampling() -> boost::optional<String>
+  auto sampling() -> boost::optional<Object>
   {
     if (is<DistributionSet>()) {
       return as<DistributionSet>().sampling();

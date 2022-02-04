@@ -47,13 +47,26 @@ struct DeterministicParameterDistribution : public ComplexType
   {
   }
 
-  auto sampling()
+  auto sampling(Scope& scope) -> bool
   {
     if (is<DeterministicMultiParameterDistribution>()) {
-      return as<DeterministicMultiParameterDistribution>().sampling();
+      auto sample = as<DeterministicMultiParameterDistribution>().sampling();
+      if (sample) {
+        for (auto && [name, value] : *sample) {
+          scope.insert(name, value);
+        }
+        return true;
+      }
+      return false;
     } else if (is<DeterministicMultiParameterDistribution>()) {
-      return as<DeterministicSingleParameterDistribution>().sampling();
+      auto sample = as<DeterministicSingleParameterDistribution>().sampling();
+      if(sample){
+        scope.insert(as<DeterministicSingleParameterDistribution>().parameterName, *sample);
+        return true;
+      }
+      return false;
     } else {
+      throw UNSUPPORTED_ELEMENT_SPECIFIED(type().name());
     }
   }
 };
