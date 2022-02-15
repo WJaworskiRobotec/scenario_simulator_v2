@@ -17,6 +17,7 @@
 #include <iostream>
 #include <limits>
 #include <rclcpp/rclcpp.hpp>
+#include <thread>
 #include <traffic_simulator/math/bounding_box.hpp>
 #include <traffic_simulator/math/hermite_curve.hpp>
 #include <vector>
@@ -214,10 +215,14 @@ const std::vector<geometry_msgs::msg::Point> HermiteCurve::getTrajectory(
 
 std::vector<geometry_msgs::msg::Point> HermiteCurve::getTrajectory(size_t num_points) const
 {
-  std::vector<geometry_msgs::msg::Point> ret;
+  std::vector<geometry_msgs::msg::Point> ret = std::vector<geometry_msgs::msg::Point>(num_points);
+  std::vector<std::future<geometry_msgs::msg::Point> > future;
   for (size_t i = 0; i <= num_points; i++) {
-    double t = static_cast<double>(i) / 100.0;
-    ret.emplace_back(getPoint(t, false));
+    double s = static_cast<double>(i) / static_cast<double>(num_points);
+    future.emplace_back(std::async(std::launch::async, [this, s] { return getPoint(s, false); }));
+  }
+  for (size_t i = 0; i <= num_points; i++) {
+    ret[i] = future[i].get();
   }
   return ret;
 }
