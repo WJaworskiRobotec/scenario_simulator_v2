@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <future>
 #include <iostream>
 #include <limits>
 #include <rclcpp/rclcpp.hpp>
@@ -214,10 +215,15 @@ const std::vector<geometry_msgs::msg::Point> HermiteCurve::getTrajectory(
 
 std::vector<geometry_msgs::msg::Point> HermiteCurve::getTrajectory(size_t num_points) const
 {
-  std::vector<geometry_msgs::msg::Point> ret;
+  std::vector<geometry_msgs::msg::Point> ret(num_points);
+  std::vector<std::future<geometry_msgs::msg::Point>> futures;
   for (size_t i = 0; i <= num_points; i++) {
-    double t = static_cast<double>(i) / static_cast<double>(num_points);
-    ret.emplace_back(getPoint(t, false));
+    futures.emplace_back(std::async(std::launch::async, [this, i, num_points]() {
+      return getPoint(static_cast<double>(i) / static_cast<double>(num_points), false);
+    }));
+  }
+  for (size_t i = 0; i <= num_points; i++) {
+    ret[i] = futures[i].get();
   }
   return ret;
 }
