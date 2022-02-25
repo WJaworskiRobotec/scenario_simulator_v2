@@ -215,15 +215,18 @@ const std::vector<geometry_msgs::msg::Point> HermiteCurve::getTrajectory(
 
 std::vector<geometry_msgs::msg::Point> HermiteCurve::getTrajectory(size_t num_points) const
 {
-  std::vector<geometry_msgs::msg::Point> ret(num_points);
+  /**
+   * @TODO check vector length
+   */
+  std::vector<geometry_msgs::msg::Point> ret;
   std::vector<std::future<geometry_msgs::msg::Point>> futures;
   for (size_t i = 0; i <= num_points; i++) {
     futures.emplace_back(std::async(std::launch::async, [this, i, num_points]() {
       return getPoint(static_cast<double>(i) / static_cast<double>(num_points), false);
     }));
   }
-  for (size_t i = 0; i <= num_points; i++) {
-    ret[i] = futures[i].get();
+  for(auto & future : futures) {
+    ret.emplace_back(future.get());
   }
   return ret;
 }
