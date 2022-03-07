@@ -65,6 +65,11 @@ const sensor_msgs::msg::PointCloud2 Raycaster::raycast(
   std::string frame_id, const rclcpp::Time & stamp, geometry_msgs::msg::Pose origin,
   std::vector<geometry_msgs::msg::Quaternion> directions, double max_distance, double min_distance)
 {
+  /**
+   * @brief hard-coded parameter, height offset of the lidar position.
+   */
+  double offset = 2.0;
+
   detected_objects_ = {};
   std::vector<unsigned int> detected_ids = {};
   scene_ = rtcNewScene(device_);
@@ -80,7 +85,7 @@ const sensor_msgs::msg::PointCloud2 Raycaster::raycast(
     RTCRayHit rayhit;
     rayhit.ray.org_x = origin.position.x;
     rayhit.ray.org_y = origin.position.y;
-    rayhit.ray.org_z = origin.position.z;
+    rayhit.ray.org_z = origin.position.z + offset;
     rayhit.ray.tfar = max_distance;
     rayhit.ray.tnear = min_distance;
     rayhit.ray.flags = false;
@@ -100,7 +105,7 @@ const sensor_msgs::msg::PointCloud2 Raycaster::raycast(
       {
         p.x = vector[0];
         p.y = vector[1];
-        p.z = vector[2];
+        p.z = vector[2] - offset;
       }
       cloud->emplace_back(p);
       if (std::count(detected_ids.begin(), detected_ids.end(), rayhit.hit.geomID) == 0) {
